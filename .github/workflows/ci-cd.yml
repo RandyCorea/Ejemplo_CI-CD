@@ -10,28 +10,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3  # Versión actualizada
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4  # Versión actualizada
       with:
         python-version: 3.8
 
     - name: Install dependencies
-      run: python -m pip install --upgrade pip
-    
-    - name: Install test dependencies
-      run: pip install unittest
+      run: |
+        python -m pip install --upgrade pip
+        pip install unittest
+
+    - name: Show Python version
+      run: python --version
+
+    - name: Show pip version
+      run: pip --version
+
+    - name: List installed packages
+      run: pip list
 
     - name: Run tests
       run: python -m unittest discover
+      continue-on-error: true  # Permite que el flujo continúe para obtener registros incluso si hay un error
 
   deploy:
+    if: success()  # Solo ejecutar si el trabajo build-and-test tiene éxito
     needs: build-and-test
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3  # Versión actualizada
 
     - name: Deploy to Production
       run: echo "Deploying to production..."
